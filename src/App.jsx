@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useCallback} from "react";
 import './assets/styles/style.css';
 import {db} from "./firebase/index";
-import {AnswersList, Chats} from "./components/index";
+import {AnswersList, Chats, Loading} from "./components/index";
 import {FormDialog} from "./components/Forms/index";
 
 const App = () => {
@@ -102,9 +102,15 @@ const App = () => {
   return (
     <section className="c-section">
       <div className="c-box">
-        <Chats chats={chats} />
-        <AnswersList answers={answers} select={selectAnswer} />
-        <FormDialog open={open} handleClose={handleClose} />
+        {(Object.keys(dataset).length === 0) ? (
+          <Loading />
+        ) : (
+          <>
+            <Chats chats={chats} />
+            <AnswersList answers={answers} select={selectAnswer}/>
+          </>
+        )}
+        <FormDialog open={open} handleOpen={handleOpen} handleClose={handleClose}/>
       </div>
     </section>
   );
