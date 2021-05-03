@@ -1,8 +1,8 @@
 import React from "react";
-import defaultDataset from "./dataset";
 import './assets/styles/style.css';
 import {AnswersList, Chats} from "./components/index";
 import FormDialog from "./components/Forms/FormDialog";
+import {db} from "./firebase/index";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -11,7 +11,7 @@ export default class App extends React.Component {
       answers: [],                  // 回答コンポーネントに表示するデータ
       chats: [],                    // チャットコンポーネントに表示するデータ
       currentId: "init",            // 現在の質問ID
-      dataset: defaultDataset,      // 質問と回答のデータセット
+      dataset: {},                  // 質問と回答のデータセット
       open: false                   // 問い合わせフォーム用モーダルの開閉を管理
     }
     this.selectAnswer = this.selectAnswer.bind(this)
@@ -35,7 +35,8 @@ export default class App extends React.Component {
 
   selectAnswer = (selectedAnswer, nextQuestionId) => {
     switch(true) {
-      case (nextQuestionId === 'init'):
+      case (nextQuestionId === "init"):
+        debugger
         setTimeout(() => this.displayNextQuestion(nextQuestionId), 500);
         break;
 
@@ -76,9 +77,26 @@ export default class App extends React.Component {
     this.setState({open: false});
   }
 
+  initDataset = (dataset) => {
+    this.setState({dataset: dataset});
+  }
+
   componentDidMount() {
-    const initAnswer = '';
-    this.selectAnswer(initAnswer, this.state.currentId)
+    (async() => {
+      const dataset = this.state.dataset;
+
+      await db.collection('questions').get().then(snapshots => {
+        snapshots.forEach(doc => {
+          const id = doc.id;
+          const data = doc.data();
+          dataset[id] = data;
+        })
+      });
+
+      this.initDataset(dataset);
+      const initAnswer = "";
+      this.selectAnswer(initAnswer, this.state.currentId)
+    })()
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {

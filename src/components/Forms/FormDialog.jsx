@@ -5,7 +5,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextInput from "./TextInput";
-import {WEBHOOK_URL} from '../../webhookConfig.js';
+import {WEBHOOK_URL} from '../../webhookConfig';
 
 export default class FormDialog extends React.Component {
   constructor(props) {
