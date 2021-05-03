@@ -2,6 +2,7 @@ import React from "react";
 import defaultDataset from "./dataset";
 import './assets/styles/style.css';
 import {AnswersList, Chats} from "./components/index";
+import FormDialog from "./components/Forms/FormDialog";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -14,6 +15,8 @@ export default class App extends React.Component {
       open: false                   // 問い合わせフォーム用モーダルの開閉を管理
     }
     this.selectAnswer = this.selectAnswer.bind(this)
+    this.handleClickOpen = this.handleClickOpen.bind(this);
+    this.handleClickClose = this.handleClickClose.bind(this);
   }
 
   displayNextQuestion = (nextQuestionId) => {
@@ -34,6 +37,10 @@ export default class App extends React.Component {
     switch(true) {
       case (nextQuestionId === 'init'):
         setTimeout(() => this.displayNextQuestion(nextQuestionId), 500);
+        break;
+
+      case (nextQuestionId === 'contact'):
+        this.handleClickOpen();
         break;
 
       case (/^https:*/.test(nextQuestionId)):
@@ -61,6 +68,14 @@ export default class App extends React.Component {
     }
   }
 
+  handleClickOpen = () => {
+    this.setState({open: true});
+  }
+
+  handleClickClose = () => {
+    this.setState({open: false});
+  }
+
   componentDidMount() {
     const initAnswer = '';
     this.selectAnswer(initAnswer, this.state.currentId)
@@ -79,6 +94,7 @@ export default class App extends React.Component {
         <div className="c-box">
           <Chats chats={this.state.chats} />
           <AnswersList answers={this.state.answers} select={this.selectAnswer} />
+          <FormDialog open={this.state.open} handleClose={this.handleClickClose} />
         </div>
       </section>
     );
